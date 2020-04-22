@@ -1,16 +1,24 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Injector } from '@angular/core';
 
-import { AppComponent } from './app.component';
+import { FormCreatorComponent } from './form-creator/form-creator.component';
+import { createCustomElement } from '@angular/elements';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule
-  ],
+  declarations: [FormCreatorComponent],
+  imports: [BrowserModule],
+  entryComponents: [FormCreatorComponent],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [],
 })
-export class AppModule { }
+export class AppModule {
+  constructor(injector: Injector) {
+    const custom = createCustomElement(FormCreatorComponent, {
+      injector,
+    });
+
+    customElements.define('careyou-form-creator', custom);
+  }
+
+  ngDoBootstrap() {}
+}
