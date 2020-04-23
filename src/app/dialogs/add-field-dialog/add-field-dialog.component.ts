@@ -1,11 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
-import {
-  CareYouFormField,
-  CareYouFormFieldOptions,
-} from 'src/app/models/field';
-import { CareYouForm } from 'src/app/models/form';
+import { CareYouFormField } from 'src/app/models/field';
 import * as uuid from 'uuid';
 
 interface FieldType {
@@ -21,8 +17,8 @@ interface FieldType {
 })
 export class AddFieldDialogComponent implements OnInit {
   hasOptions = false;
-  otherYesNoFields: CareYouForm = [];
-  fieldOptions: CareYouFormFieldOptions[] = [];
+  formField: CareYouFormField;
+  otherYesNoFields: CareYouFormField[] = [];
   fieldTypes = [
     { name: 'text', label: 'Texto', hasOptions: false },
     { name: 'yes-no', label: 'Si/No', hasOptions: false },
@@ -34,8 +30,11 @@ export class AddFieldDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<AddFieldDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: CareYouFormField
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.formField = data.formField;
+    this.otherYesNoFields = data.yesNoFields;
+  }
 
   ngOnInit(): void {
     console.log('init Dialog');
@@ -43,14 +42,34 @@ export class AddFieldDialogComponent implements OnInit {
 
   onChangeFieldType(event: MatSelectChange): void {
     this.hasOptions = event.value.hasOptions;
+
+    if (this.hasOptions) {
+      if (
+        this.formField.options === undefined ||
+        this.formField.options.length === 0
+      ) {
+        this.onAddOption();
+        this.onAddOption();
+      }
+    } else {
+      delete this.formField.options;
+    }
   }
 
   onCancel(): void {
     this.dialogRef.close();
   }
 
+  onSubmit(form): void {
+    console.log(form);
+  }
+
   onAddOption(): void {
-    this.fieldOptions.push({
+    if (this.formField.options === undefined) {
+      this.formField.options = [];
+    }
+
+    this.formField.options.push({
       id: uuid.v4(),
       text: '',
       value: '',
@@ -58,6 +77,8 @@ export class AddFieldDialogComponent implements OnInit {
   }
 
   onDeleteOption(option): void {
-    this.fieldOptions = this.fieldOptions.filter((o) => o.id !== option.id);
+    this.formField.options = this.formField.options.filter(
+      (o) => o.id !== option.id
+    );
   }
 }

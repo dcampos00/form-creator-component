@@ -1,88 +1,112 @@
 <h2 mat-dialog-title>Agregar Nuevo Campo</h2>
 <div mat-dialog-content>
-  <div fxLayout="row wrap" fxLayoutGap="8px">
-    <mat-form-field fxFlex="30">
-      <mat-label>Tipo</mat-label>
-      <mat-select
-        required
-        (selectionChange)="onChangeFieldType($event)"
-        [(ngModel)]="data.type"
-      >
-        <mat-option *ngFor="let fieldType of fieldTypes" [value]="fieldType">
-          {{ fieldType.label }}
-        </mat-option>
-        <mat-hint>Hola</mat-hint>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field fxFlex="calc(70% - 16px)">
-      <mat-label>Pregunta</mat-label>
-      <input matInput id="question" required [(ngModel)]="data.question" />
-    </mat-form-field>
-    <mat-form-field fxFlex>
-      <mat-label>Ayuda</mat-label>
-      <input matInput id="help" [(ngModel)]="data.help" />
-    </mat-form-field>
-    <mat-form-field fxFlex="20">
-      <mat-label>Mostrar si</mat-label>
-      <mat-select
-        required
-        [(ngModel)]="data.showIf"
-        [disabled]="otherYesNoFields.length"
-      >
-        <mat-option>-</mat-option>
-        <mat-option *ngFor="let field of otherYesNoFields" [value]="field.id">
-          {{ field.question }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <!-- Options -->
-  <div *ngIf="hasOptions" fxLayout="column">
-    <div fxLayout="row" fxFlex="100">
-      <h3 fxFlexAlign="center">
-        <span>Opciones</span>
-        <button
-          mat-icon-button
-          color="primary"
-          (click)="onAddOption()"
-          matTooltip="Agregar nueva opción"
+  <form #fieldForm="ngForm">
+    <div fxLayout="row wrap" fxLayoutGap="8px">
+      <mat-form-field fxFlex="30">
+        <mat-label>Tipo</mat-label>
+        <mat-select
+          id="type"
+          name="type"
+          #type="ngModel"
+          required
+          (selectionChange)="onChangeFieldType($event)"
+          [(ngModel)]="formField.type"
         >
-          <mat-icon>add</mat-icon>
-        </button>
-      </h3>
+          <mat-option *ngFor="let fieldType of fieldTypes" [value]="fieldType">
+            {{ fieldType.label }}
+          </mat-option>
+          <mat-hint>Hola</mat-hint>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field fxFlex="calc(70% - 16px)">
+        <mat-label>Pregunta</mat-label>
+        <input
+          id="question"
+          name="question"
+          #question="ngModel"
+          matInput
+          required
+          [(ngModel)]="formField.question"
+        />
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <mat-label>Ayuda</mat-label>
+        <input matInput id="help" name="help" [(ngModel)]="formField.help" />
+      </mat-form-field>
+      <mat-form-field fxFlex="20">
+        <mat-label>Mostrar si</mat-label>
+        <mat-select
+          id="show-if"
+          name="show-if"
+          [(ngModel)]="formField.showIf"
+          [disabled]="otherYesNoFields.length == 0"
+        >
+          <mat-option>-</mat-option>
+          <mat-option *ngFor="let field of otherYesNoFields" [value]="field.id">
+            {{ field.question }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div
-      fxLayout="row"
-      fxLayoutGap="8px"
-      fxFlex="100"
-      *ngFor="let option of fieldOptions"
-    >
-      <mat-form-field>
-        <mat-label>Texto</mat-label>
-        <input matInput id="text" required />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Valor</mat-label>
-        <input matInput id="value" required />
-      </mat-form-field>
-      <button
-        mat-icon-button
-        color="warn"
-        (click)="onDeleteOption(option)"
-        matTooltip="Borrar opción"
+    <!-- Options -->
+    <div *ngIf="hasOptions" fxLayout="column">
+      <div fxLayout="row" fxFlex="100">
+        <h3 fxFlexAlign="center">
+          <span>Opciones</span>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="onAddOption()"
+            matTooltip="Agregar nueva opción"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </h3>
+      </div>
+      <div
+        fxLayout="row"
+        fxLayoutGap="8px"
+        fxFlex="100"
+        *ngFor="let option of formField.options"
       >
-        <mat-icon>close</mat-icon>
-      </button>
+        <mat-form-field>
+          <mat-label>Texto</mat-label>
+          <input
+            matInput
+            name="optionText-{{ option.id }}"
+            required
+            [(ngModel)]="option.text"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Valor</mat-label>
+          <input
+            matInput
+            name="optionValue-{{ option.id }}"
+            required
+            [(ngModel)]="option.value"
+          />
+        </mat-form-field>
+        <button
+          *ngIf="formField.options.length > 2"
+          mat-icon-button
+          color="warn"
+          (click)="onDeleteOption(option)"
+          matTooltip="Borrar opción"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
     </div>
-  </div>
+  </form>
 </div>
 <div mat-dialog-actions fxLayoutAlign="end">
   <button mat-button (click)="onCancel()">Cancelar</button>
   <button
     mat-raised-button
     color="primary"
-    [mat-dialog-close]="data"
-    cdkFocusInitial
+    [mat-dialog-close]="formField"
+    [disabled]="!fieldForm.dirty || !fieldForm.valid"
   >
     Agregar
   </button>

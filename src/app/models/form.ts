@@ -1,3 +1,9 @@
 import { CareYouFormField } from './field';
 
-export type CareYouForm = CareYouFormField[];
+export interface CareYouForm {
+  name: string;
+  label: string;
+  title: string;
+  help: string;
+  fields: CareYouFormField[];
+}

@@ -1,66 +1,112 @@
 <div fxFlex>
-  <h2>Crear Formulario</h2>
-  <div fxLayout="row wrap" fxLayoutGap="8px">
-    <mat-form-field fxFlex="40">
-      <mat-label>Nombre</mat-label>
-      <input matInput type="text" id="name" required />
-      <mat-hint>Debe ser un nombre unico</mat-hint>
-    </mat-form-field>
-    <mat-form-field fxFlex="Calc(60% - 16px)">
-      <mat-label>Etiqueta</mat-label>
-      <input matInput type="text" id="label" required />
-      <mat-hint>Nombre fácil de recordar</mat-hint>
-    </mat-form-field>
-    <mat-form-field fxFlex="100">
-      <mat-label>Titulo</mat-label>
-      <input matInput type="text" id="title" required />
-      <mat-hint>Titulo del formulario que será mostrado</mat-hint>
-    </mat-form-field>
-    <mat-form-field fxFlex="100">
-      <mat-label>Ayuda</mat-label>
-      <textarea matInput name="help" id="help" cols="30" rows="5"></textarea>
-      <mat-hint>Ayuda general para rellenar el formulario</mat-hint>
-    </mat-form-field>
-  </div>
-  <mat-divider></mat-divider>
-  <div fxLayout="column">
-    <div fxLayout="row">
-      <h3 fxFlex="100">Campos del Formulario</h3>
-      <button mat-raised-button color="primary" (click)="onAddField()">
-        <mat-icon>add</mat-icon> Agregar Campo
+  <form #f="ngForm" fxFlex>
+    <h2>Crear Formulario</h2>
+    <div fxLayout="row wrap" fxLayoutGap="8px">
+      <mat-form-field fxFlex="40">
+        <mat-label>Nombre</mat-label>
+        <input
+          matInput
+          type="text"
+          id="name"
+          name="name"
+          #name="ngModel"
+          [(ngModel)]="newForm.name"
+          required
+        />
+        <mat-hint>Debe ser un nombre unico</mat-hint>
+      </mat-form-field>
+      <mat-form-field fxFlex="Calc(60% - 16px)">
+        <mat-label>Etiqueta</mat-label>
+        <input
+          matInput
+          type="text"
+          id="label"
+          required
+          name="label"
+          #label="ngModel"
+          [(ngModel)]="newForm.label"
+        />
+        <mat-hint>Nombre fácil de recordar</mat-hint>
+      </mat-form-field>
+      <mat-form-field fxFlex="100">
+        <mat-label>Titulo</mat-label>
+        <input
+          matInput
+          type="text"
+          id="title"
+          required
+          name="title"
+          #title="ngModel"
+          [(ngModel)]="newForm.title"
+        />
+        <mat-hint>Titulo del formulario que será mostrado</mat-hint>
+      </mat-form-field>
+      <mat-form-field fxFlex="100">
+        <mat-label>Ayuda</mat-label>
+        <textarea
+          matInput
+          name="help"
+          id="help"
+          cols="30"
+          rows="5"
+          #help="ngModel"
+          [(ngModel)]="newForm.help"
+        ></textarea>
+        <mat-hint>Ayuda general para rellenar el formulario</mat-hint>
+      </mat-form-field>
+    </div>
+    <mat-divider></mat-divider>
+    <div fxLayout="column">
+      <div fxLayout="row">
+        <h3 fxFlex="100">Campos del Formulario</h3>
+        <button mat-raised-button color="primary" (click)="onAddField()">
+          <mat-icon>add</mat-icon> Agregar Campo
+        </button>
+      </div>
+      <div class="fields-container" fxLayout="column">
+        <div *ngFor="let field of newForm.fields" fxFlex fxLayout="row wrap">
+          <div *ngIf="newForm.fields.length > 1">
+            <button mat-icon-button (click)="onDeleteField(field)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <div fxFlex fxLayout="row wrap">
+            <div>
+              <b> {{ field.type.label }}: </b>
+              {{ field.question }}
+            </div>
+            <div>
+              (Ayuda: {{ field.help }}
+              <span *ngIf="!field.help"><i>Sin Ayuda</i></span
+              >)
+            </div>
+            <div *ngIf="field.options" fxFlex="100">
+              Opciones
+              <ul>
+                <li *ngFor="let option of field.options">
+                  {{ option.text }} ({{ option.value }})
+                </li>
+              </ul>
+            </div>
+            <mat-divider fxFlex="100"></mat-divider>
+          </div>
+        </div>
+        <div *ngIf="!newForm.fields || !newForm.fields.length" fxFlex>
+          No hay campos aun.
+        </div>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="end">
+      <button
+        [disabled]="
+          !f.dirty || !f.valid || !newForm.fields || newForm.fields.length === 0
+        "
+        mat-raised-button
+        color="primary"
+        (click)="onSaveForm()"
+      >
+        Guardar
       </button>
     </div>
-    <div class="fields-container" fxLayout="column">
-      <div *ngFor="let field of form" fxFlex fxLayout="row">
-        <div>
-          <button mat-icon-button (click)="onDeleteField(field)">
-            <mat-icon>close</mat-icon>
-          </button>
-        </div>
-        <div fxFlex fxLayout="row wrap">
-          <div>
-            <b> {{ field.type.label }}: </b>
-            {{ field.question }}
-          </div>
-          <div>(ayuda: {{ field.help }})</div>
-          <div *ngIf="field.options" fxFlex="100">
-            Opciones
-            <ul>
-              <li *ngFor="let option of field.options">
-                {{ option.text }} ({{ option.value }})
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="!form || !form.length" fxFlex>
-        No hay campos aun.
-      </div>
-    </div>
-  </div>
-  <div fxLayout="row" fxLayoutAlign="end">
-    <button mat-raised-button color="primary" (click)="onSaveForm()">
-      Guardar
-    </button>
-  </div>
+  </form>
 </div>
