@@ -13,7 +13,9 @@ export class AddFieldDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: CareYouFormField
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('init Dialog');
+  }
 
   onNoClick() {
     console.log('noclieck');

@@ -15,6 +15,7 @@ export class FormCreatorComponent implements OnInit {
   ngOnInit(): void {}
 
   onAddField() {
+    console.log('onAddField');
     const dialogRef = this.dialog.open(AddFieldDialogComponent, {
       width: '80%',
       data: { id: 'hola' },
