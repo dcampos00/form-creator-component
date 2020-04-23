@@ -1,14 +1,89 @@
-<h1 mat-dialog-title>Hi {{ data.id }}</h1>
+<h2 mat-dialog-title>Agregar Nuevo Campo</h2>
 <div mat-dialog-content>
-  <p>What's your favorite animal?</p>
-  <mat-form-field>
-    <mat-label>Favorite Animal</mat-label>
-    <input matInput [(ngModel)]="data.id" />
-  </mat-form-field>
+  <div fxLayout="row wrap" fxLayoutGap="8px">
+    <mat-form-field fxFlex="30">
+      <mat-label>Tipo</mat-label>
+      <mat-select
+        required
+        (selectionChange)="onChangeFieldType($event)"
+        [(ngModel)]="data.type"
+      >
+        <mat-option *ngFor="let fieldType of fieldTypes" [value]="fieldType">
+          {{ fieldType.label }}
+        </mat-option>
+        <mat-hint>Hola</mat-hint>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field fxFlex="calc(70% - 16px)">
+      <mat-label>Pregunta</mat-label>
+      <input matInput id="question" required [(ngModel)]="data.question" />
+    </mat-form-field>
+    <mat-form-field fxFlex>
+      <mat-label>Ayuda</mat-label>
+      <input matInput id="help" [(ngModel)]="data.help" />
+    </mat-form-field>
+    <mat-form-field fxFlex="20">
+      <mat-label>Mostrar si</mat-label>
+      <mat-select
+        required
+        [(ngModel)]="data.showIf"
+        [disabled]="otherYesNoFields.length"
+      >
+        <mat-option>-</mat-option>
+        <mat-option *ngFor="let field of otherYesNoFields" [value]="field.id">
+          {{ field.question }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <!-- Options -->
+  <div *ngIf="hasOptions" fxLayout="column">
+    <div fxLayout="row" fxFlex="100">
+      <h3 fxFlexAlign="center">
+        <span>Opciones</span>
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="onAddOption()"
+          matTooltip="Agregar nueva opción"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </h3>
+    </div>
+    <div
+      fxLayout="row"
+      fxLayoutGap="8px"
+      fxFlex="100"
+      *ngFor="let option of fieldOptions"
+    >
+      <mat-form-field>
+        <mat-label>Texto</mat-label>
+        <input matInput id="text" required />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Valor</mat-label>
+        <input matInput id="value" required />
+      </mat-form-field>
+      <button
+        mat-icon-button
+        color="warn"
+        (click)="onDeleteOption(option)"
+        matTooltip="Borrar opción"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data.id" cdkFocusInitial>
-    Ok
+<div mat-dialog-actions fxLayoutAlign="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [mat-dialog-close]="data"
+    cdkFocusInitial
+  >
+    Agregar
   </button>
 </div>

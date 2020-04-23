@@ -1,3 +1,3 @@
 import { CareYouFormField } from './field';
 
-export type CareYouForm = [CareYouFormField];
+export type CareYouForm = CareYouFormField[];
